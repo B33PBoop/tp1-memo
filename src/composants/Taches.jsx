@@ -19,16 +19,18 @@ export default function Taches({util, taches, setTaches}) {
     setTexte('');
   }
 
-  //Ajouter une tâche dans FireStore
-  function ajoutTache(texte){
-    tacheModele.creer(util.uid, {texte: texte}).then(
-      doc => setTaches([doc, ...taches])
+  //gestion du formulaire
+  function gererForm(e){
+    e.preventDefault();
+    const texte = e.target.elements[0].value; 
+    tacheModele.creer(util.uid, {texte: texte, completee:false}).then(
+      doc => setTaches([{id:doc.id, ...doc.data()}, ...taches])
     );
   }
 
   return (
     <section className="Taches">
-      <form onSubmit={ajoutTache}>
+      <form onSubmit={e => gererForm(e)}>
         <input 
           type="text"   
           placeholder="Ajoutez une tâche ..." 
@@ -39,7 +41,7 @@ export default function Taches({util, taches, setTaches}) {
       </form>
       <div className="liste-taches">
         { 
-          taches.map(tache => <Tache key={tache} {...tache} />)
+          taches.map(tache => <Tache key={tache.id} {...tache} />)
         }
       </div>
     </section>
